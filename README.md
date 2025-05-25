@@ -6,8 +6,8 @@ It consists of a **Java Spring Boot** backend and a **React + TypeScript** front
 
 Both parts of the project are included as Git submodules:
 
-- [`backend`](./backend) – Java, Spring Boot, SQL
-- [`frontend`](./frontend) – React, TypeScript
+- [`backend`](https://github.com/JacekKaczmarek10/fullstack-backend) – Java, Spring Boot, SQL
+- [`frontend`](https://github.com/JacekKaczmarek10/fullstack-frontend) – React, TypeScript
 
 ## 🧩 Tech Stack
 
