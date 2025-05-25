@@ -1,17 +1,22 @@
 package com.kaczmarek.fullstackbackend.integrationTests;
 
-import com.kaczmarek.fullstackbackend.FullstackBackendApplication;
 import com.kaczmarek.fullstack.generated.model.MessageDto;
 import com.kaczmarek.fullstack.generated.model.NewMessageDto;
-import org.junit.jupiter.api.*;
+import com.kaczmarek.fullstackbackend.FullstackBackendApplication;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.*;
-
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
@@ -23,12 +28,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(classes = FullstackBackendApplication.class,
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MessageControllerIntegrationTest {
-
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15")
-        .withDatabaseName("testdb")
-        .withUsername("test")
-        .withPassword("test");
 
     @LocalServerPort
     private int port;
@@ -56,15 +55,14 @@ class MessageControllerIntegrationTest {
                 baseUrl + "/messages",
                 HttpMethod.GET,
                 null,
-                List.class
-            );
+                new ParameterizedTypeReference<List<Map<String, Object>>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
             final var body = response.getBody();
             assertThat(body).isNotNull();
             assertThat(body).hasSize(1);
-            final var message = (Map<String, Object>) body.get(0);
+            final var message = body.getFirst();
             assertThat(message.get("content")).isEqualTo("&lt;b&gt;Integration Test&lt;/b&gt;");
             assertThat(message.get("id")).isEqualTo(1);
         }
