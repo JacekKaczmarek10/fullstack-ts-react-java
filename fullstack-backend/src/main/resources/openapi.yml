@@ -1,0 +1,57 @@
+openapi: 3.0.1
+info:
+  title: MessageApi
+  version: 1.0.0
+
+paths:
+  /api/messages:
+    get:
+      summary: Get all messages
+      operationId: getMessages
+      tags:
+        - message
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageDto'
+    post:
+      summary: Add a message
+      operationId: addMessage
+      tags:
+        - message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewMessageDto'
+      responses:
+        '201':
+          description: Message created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDto'
+
+components:
+  schemas:
+    MessageDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        content:
+          type: string
+    NewMessageDto:
+      type: object
+      properties:
+        content:
+          type: string
+      required:
+        - content

@@ -1,34 +1,33 @@
 package com.kaczmarek.fullstackbackend.controller;
 
-import com.kaczmarek.fullstackbackend.model.Message;
+import com.kaczmarek.fullstack.generated.api.ApiApi;
+import com.kaczmarek.fullstack.generated.model.MessageDto;
+import com.kaczmarek.fullstack.generated.model.NewMessageDto;
 import com.kaczmarek.fullstackbackend.service.MessageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/messages")
-public class MessageController {
+public class MessageController implements ApiApi {
 
     private final MessageService service;
 
-    @PostMapping
-    public Message create(@RequestBody Map<String, String> body) {
-        String content = body.get("content");
-        return service.save(content);
+    @Override
+    public ResponseEntity<List<MessageDto>> getMessages() {
+        return ResponseEntity.ok(service.getAll());
     }
 
-    @GetMapping
-    public List<Message> getAll() {
-        return service.getAll();
+    @Override
+    public ResponseEntity<MessageDto> addMessage(NewMessageDto newMessageDto) {
+        return ResponseEntity.ok(service.save(newMessageDto));
     }
+
 }

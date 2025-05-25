@@ -1,5 +1,8 @@
 package com.kaczmarek.fullstackbackend.service;
 
+import com.kaczmarek.fullstack.generated.model.MessageDto;
+import com.kaczmarek.fullstack.generated.model.NewMessageDto;
+import com.kaczmarek.fullstackbackend.mapper.MessageMapper;
 import com.kaczmarek.fullstackbackend.model.Message;
 import com.kaczmarek.fullstackbackend.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,16 +15,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MessageService {
 
+    private final MessageMapper mapper;
     private final MessageRepository repository;
 
-    public Message save(String input) {
+    public MessageDto save(NewMessageDto newMessageDto) {
+        final var input = newMessageDto.getContent();
         final var sanitized = StringEscapeUtils.escapeHtml4(input);
-        final var message = new Message();
+        var message = new Message();
         message.setContent(sanitized);
-        return repository.save(message);
+        message = repository.save(message);
+        return mapper.toDto(message);
     }
 
-    public List<Message> getAll() {
-        return repository.findAll();
+    public List<MessageDto> getAll() {
+        final var messages = repository.findAll();
+        return mapper.toDtoList(messages);
     }
 }
